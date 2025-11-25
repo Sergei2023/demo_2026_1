@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 
-function LoginForm() {
+function LoginForm({ setUser }) {
   const navigate = useNavigate();
 
   async function submitHandler(e) {
@@ -9,7 +9,9 @@ function LoginForm() {
       login: e.target.login.value,
       password: e.target.password.value,
     }
-    const role = await window.api.autorizeUser(user);
+    const { role, name } = await window.api.autorizeUser(user);
+    console.log(role, name)
+    setUser({ role, name })
     if (role === 'Администратор') {
       navigate('/main');
     }
@@ -18,7 +20,6 @@ function LoginForm() {
 
   return (
     <>
-      {/* <img alt="logo" className="logo" src={electronLogo} /> */}
       <h1>Приветствие!</h1>
       <h4>Введите логин и пароль, чтобы войти</h4>
       <form onSubmit={(e) => submitHandler(e)}>
@@ -29,7 +30,10 @@ function LoginForm() {
         <button type="submit">Войти</button>
       </form>
       <h5>Перейти на экран просмотра товаров в виде гостя</h5>
-      <button>Посмотреть товары</button>
+      <button onClick={() => {
+        setUser({ role: 'гость' });
+        navigate('/main');
+      }}>Посмотреть товары</button>
     </>
   )
 }
